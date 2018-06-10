@@ -131,7 +131,7 @@ int main(int argc, char **argv)
             }
             while (in);
         }
-        catch (...) // TODO
+        catch (...)
         {
             std::cerr << "Error during decoding\n";
             return 1;

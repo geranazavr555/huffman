@@ -9,7 +9,6 @@ BitVector::BitVector() :
         data()
 {}
 
-// TODO : case = 0;
 BitVector::BitVector(std::vector<uint8_t>::const_iterator first, std::vector<uint8_t>::const_iterator last) :
         used_bits_in_last_bucket(BITS_PER_BUCKET),
         data(first, last) {}

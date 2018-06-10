@@ -16,8 +16,14 @@ namespace huffman
 
     void Decoder::decode_dict(std::vector<uint8_t> const &src)
     {
+        if (src.size() < 2)
+            throw std::runtime_error("Invalid source");
+
         size_t structure_len = src[0] + (src[1] << 8);
         size_t symbols_count = (structure_len > 0 ? structure_len / 4 + 1 : 0);
+
+        if (src.size() < 2 + structure_len / 8 + (structure_len % 8 ? 1 : 0))
+            throw std::runtime_error("Invalid source");
 
         BitVector structure_bits(src.begin() + 2, src.begin() + 2 + structure_len / 8 + (structure_len % 8 ? 1 : 0));
 
@@ -36,6 +42,9 @@ namespace huffman
 
     void Decoder::decode_data(std::vector <uint8_t> const &src, std::vector<uint8_t> &out)
     {
+        if (src.size() < 8)
+            throw std::runtime_error("Invalid source");
+
         size_t data_len = 0;
         for (size_t i = 0; i < 8; i++)
         {
