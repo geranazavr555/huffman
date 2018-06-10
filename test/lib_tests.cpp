@@ -4,6 +4,7 @@
 #include "decoder.h"
 
 #include <string>
+#include <algorithm>
 
 using huffman::Encoder;
 using huffman::Decoder;
@@ -66,6 +67,48 @@ TEST(library, real_text)
 
     std::vector<uint8_t> src(s.begin(), s.end());
     complex_test(src);
+}
+
+TEST(library, full_dict_single)
+{
+    std::vector<uint8_t> src;
+    for (size_t i = 0; i < 256; ++i)
+    {
+        src.push_back(static_cast<uint8_t>(i));
+    }
+    std::random_shuffle(src.begin(), src.end());
+
+    complex_test(src);
+}
+
+TEST(library, full_dict)
+{
+    std::vector<uint8_t> src;
+    for (size_t j = 0; j < 10; ++j)
+    {
+        for (size_t i = 0; i < 256; ++i)
+        {
+            src.push_back(static_cast<uint8_t>(i));
+        }
+    }
+    std::random_shuffle(src.begin(), src.end());
+
+    complex_test(src);
+}
+
+TEST(library, random_tests)
+{
+    srand(time(nullptr));
+    std::vector<uint8_t> src;
+    for (size_t j = 0; j < 10; ++j)
+    {
+        src.clear();
+        for (size_t i = 0; i < 10000; ++i)
+        {
+            src.push_back(static_cast<uint8_t>(rand()));
+        }
+        complex_test(src);
+    }
 }
 
 TEST(library, big_data)
