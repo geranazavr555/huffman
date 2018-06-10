@@ -58,7 +58,15 @@ void BitVector::push_full_bucket_back(uint8_t values)
 
 void BitVector::extend_full_bucket_back(uint8_t values)
 {
-    if (used_bits_in_last_bucket == 0 || used_bits_in_last_bucket == BITS_PER_BUCKET)
+    if (used_bits_in_last_bucket == 0)
+    {
+        if (data.size() == 0)
+            data.push_back(values);
+        else
+            data.back() = values;
+        used_bits_in_last_bucket = BITS_PER_BUCKET;
+    }
+    else if (used_bits_in_last_bucket == BITS_PER_BUCKET)
         data.push_back(values);
     else
     {

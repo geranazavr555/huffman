@@ -3,6 +3,7 @@
 #include "encoder.h"
 #include "decoder.h"
 
+#include <fstream>
 #include <string>
 #include <algorithm>
 
@@ -139,3 +140,12 @@ TEST(library, big_data)
     ASSERT_EQ(src, decoded);
     ASSERT_LE(encoded.size() + encoded_dict.size(), src.size());
 }
+/*
+TEST(library, super_test)
+{
+    std::ifstream in("test_files/ttt.pack");
+    std::vector<uint8_t> buf(5730602);
+    in.read(reinterpret_cast<char*>(buf.data()), 5730602);
+
+    complex_test(buf);
+}*/

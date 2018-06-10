@@ -47,12 +47,14 @@ int main(int argc, char **argv)
         {
             in.read(reinterpret_cast<char*>(block.data()), BLOCK_SIZE);
             block.resize(static_cast<size_t>(in.gcount()));
+
             cnt.feed(block);
         }
         while (in);
 
         in.close();
-        in.open(argv[2], ifstream::binary);
+        //in.open(argv[2], ifstream::binary);
+        ifstream nin(argv[2], ifstream::binary);
 
         /// at start: [8 bytes -- len of encoded dict][encoded dict]
         /// [8 bytes -- len of encoded block][encoded_block] ... ... ...
@@ -64,17 +66,18 @@ int main(int argc, char **argv)
 
         out.write(reinterpret_cast<char*>(encoded_dict.data()), encoded_dict.size());
 
+        block.resize(BLOCK_SIZE);
         do
         {
-            in.read(reinterpret_cast<char*>(block.data()), BLOCK_SIZE);
-            block.resize(static_cast<size_t>(in.gcount()));
+            nin.read(reinterpret_cast<char*>(block.data()), BLOCK_SIZE);
+            block.resize(static_cast<size_t>(nin.gcount()));
             encoder.encode_data(block, encoded_block);
 
             for (size_t i = 0; i < 8; i++)
                 out.put(static_cast<char>((encoded_block.size() >> (8 * i)) & 0xff));
             out.write(reinterpret_cast<char*>(encoded_block.data()), encoded_block.size());
         }
-        while (in);
+        while (nin);
     }
     else if (mode == "decode")
     {
