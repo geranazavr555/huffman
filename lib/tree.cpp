@@ -15,8 +15,8 @@ namespace huffman
 {
     TreeNode::TreeNode(uint8_t symbol, size_t cnt) :
             sum(cnt),
-            children({nullptr, nullptr}),
-            symbols({symbol}) {}
+            children{nullptr, nullptr},
+            symbols{symbol} {}
 
     TreeNode::TreeNode(uint8_t symbol) : TreeNode(symbol, 0) {}
 
@@ -25,7 +25,7 @@ namespace huffman
 
     TreeNode::TreeNode(TreeNode *left_child, TreeNode *right_child):
             sum(left_child->sum + right_child->sum),
-            children({left_child, right_child}),
+            children{left_child, right_child},
             symbols(left_child->symbols)
     {
         for (const auto symbol : right_child->symbols)
