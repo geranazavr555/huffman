@@ -77,14 +77,15 @@ namespace huffman
 
         if (!tree.empty() && tree.root()->is_leaf())
         {
-            for (auto item : src)
+            //for (auto item : src)
+            for (size_t i = 0; i < src.size(); ++i)
             {
                 encoded_data.push_back(false);
             }
         }
         else
         {
-            for (auto item : src)
+            for (auto &item : src)
             {
                 encoded_data.extend(dict[item]);
             }
