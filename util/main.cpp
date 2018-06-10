@@ -51,7 +51,6 @@ int main(int argc, char **argv)
         }
         while (in);
 
-        //in.seekg(0);
         in.close();
         in.open(argv[2], ifstream::binary);
 
@@ -79,34 +78,12 @@ int main(int argc, char **argv)
     }
     else if (mode == "decode")
     {
-        Decoder decoder;
-
-        bool eof = false;
-        size_t dict_len = 0;
-        for (size_t i = 0; i < 8; i++)
+        try
         {
-            auto cur = in.get();
-            if (cur < 0)
-            {
-                eof = true;
-                break;
-            }
-            dict_len += static_cast<size_t>(cur) << (8 * i);
-        }
-        if (eof)
-        {
-            return -1;
-        }
+            Decoder decoder;
 
-        vector <uint8_t> encoded_dict(dict_len);
-        in.read(reinterpret_cast<char*>(encoded_dict.data()), dict_len);
-        decoder.decode_dict(encoded_dict);
-
-        vector <uint8_t> encoded_data, data;
-
-        do
-        {
-            size_t block_len = 0;
+            bool eof = false;
+            size_t dict_len = 0;
             for (size_t i = 0; i < 8; i++)
             {
                 auto cur = in.get();
@@ -115,17 +92,47 @@ int main(int argc, char **argv)
                     eof = true;
                     break;
                 }
-                block_len += static_cast<size_t>(cur) << (8 * i);
+                dict_len += static_cast<size_t>(cur) << (8 * i);
             }
             if (eof)
-                break;
+            {
+                return -1;
+            }
 
-            encoded_data.resize(block_len);
-            in.read(reinterpret_cast<char*>(encoded_data.data()), block_len);
-            decoder.decode_data(encoded_data, data);
-            out.write(reinterpret_cast<char*>(data.data()), data.size());
+            vector <uint8_t> encoded_dict(dict_len);
+            in.read(reinterpret_cast<char*>(encoded_dict.data()), dict_len);
+            decoder.decode_dict(encoded_dict);
+
+            vector <uint8_t> encoded_data, data;
+
+            do
+            {
+                size_t block_len = 0;
+                for (size_t i = 0; i < 8; i++)
+                {
+                    auto cur = in.get();
+                    if (cur < 0)
+                    {
+                        eof = true;
+                        break;
+                    }
+                    block_len += static_cast<size_t>(cur) << (8 * i);
+                }
+                if (eof)
+                    break;
+
+                encoded_data.resize(block_len);
+                in.read(reinterpret_cast<char*>(encoded_data.data()), block_len);
+                decoder.decode_data(encoded_data, data);
+                out.write(reinterpret_cast<char*>(data.data()), data.size());
+            }
+            while (in);
         }
-        while (in);
+        catch (...) // TODO
+        {
+            std::cerr << "Error during decoding\n";
+            return 1;
+        }
     }
     else
         print_usage();

@@ -44,7 +44,7 @@ namespace huffman
         }
 
         BitVector data_bits(src.begin() + 8, src.end());
-        //data_bits.resize(data_len); // TODO : FIX
+        //data_bits.resize(data_len);
 
         out.clear();
         if (!tree.empty())
